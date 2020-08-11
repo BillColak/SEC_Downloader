@@ -4,19 +4,14 @@ If you have any suggestions on how to improve this project or would like to cont
 
 Why use this code
 ------------
-- XBRL with your own validation, it will allow for multiple company comparison over periods of time.
-- Download Financial Statements in mass. Hence why the XBRL taxonomy is included.
-- Other online options fail as this code is more rigorously tested.
-- instead of directly downloading the excel files, it scrapes html versions with xbrl taxonomy which allows enables
- integration into other code projects.
- - https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/about-readmes
+- By implementing XBRL validation, this code can be used for data mining and mass downloading of SEC filings.
 
 Screenshots
 -----------
 
-<https://i.imgur.com/r7rbBOT.png>
+![](images/image1.png)
 
-<https://i.imgur.com/piorgI8.png>
+![](images/image2.png)
 
 Requirements
 ------------

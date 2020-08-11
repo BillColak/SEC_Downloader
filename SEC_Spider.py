@@ -209,15 +209,17 @@ def parse_sec_file(file_url):
 
 ticker = "AAPL"
 file_type = '10-K'
+date_prior = '20200710'
 
 param_dict = {'action': 'getcompany',
               'CIK': ticker,
               'type': file_type,
-              'dateb': '20200710',
+              'dateb': date_prior,
               'owner': 'exclude',
               'start': '',
               'output': '',
               'count': '10'}
+
 statements_dict = get_sec_file(param_dict)
 with pd.ExcelWriter(ticker + '_' + file_type + '.xlsx') as writer:
     for k, v in statements_dict.items():

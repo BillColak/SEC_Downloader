@@ -25,12 +25,12 @@ def check_ele_exists(html_soup):
     except: print("No statements available, check parameters.")
 
 
-def get_sec_file(parameter_dict):
+def get_sec_file(parameter_dict, hd):
     parameter_dict["CIK"] = parameter_dict["CIK"].replace(".", "-")
     base_url = r"https://www.sec.gov"
     endpoint = r"https://www.sec.gov/cgi-bin/browse-edgar"
 
-    response = requests.get(url=endpoint, params=parameter_dict)
+    response = requests.get(url=endpoint, params=parameter_dict, headers=hd)
     if DEBUG: print(parameter_dict["CIK"], response.url)
 
     link_content = requests.get(response.url).content
@@ -38,6 +38,7 @@ def get_sec_file(parameter_dict):
     td = check_ele_exists(soup)
 
     Acc_list = []
+    # breakpoint()
 
     if td:  # don't ask for permission, ask for forgiveness.
         for table_soup in td:
@@ -72,8 +73,8 @@ def get_sec_file(parameter_dict):
             report_dict = dict()
             report_dict['name_short'] = report.shortname.text
             report_dict['name_long'] = report.longname.text
-            report_dict['position'] = report.position.text
-            report_dict['category'] = report.menucategory.text
+            report_dict['position'] = report.position.text  # no position
+            report_dict['category'] = report.menucategory.text  # no category
             report_dict['reporttype'] = report.reporttype.text
             report_dict['url'] = xml_base_url + report.htmlfilename.text
 
@@ -209,7 +210,7 @@ def parse_sec_file(file_url):
 
 ticker = "AAPL"
 file_type = '10-K'
-date_prior = '20200710'
+date_prior = '20200101'
 
 param_dict = {'action': 'getcompany',
               'CIK': ticker,
@@ -220,8 +221,18 @@ param_dict = {'action': 'getcompany',
               'output': '',
               'count': '10'}
 
-statements_dict = get_sec_file(param_dict)
-with pd.ExcelWriter(ticker + '_' + file_type + '.xlsx') as writer:
-    for k, v in statements_dict.items():
-        filings_df = parse_sec_file(v)
-        filings_df.to_excel(writer, sheet_name=k)
+headers = {
+    'User-agent': 'Sample Company Name AdminContact@<sample company domain>.com',   # CHANGE THIS TO YOUR OWN USER-AGENT
+    'Accept-Encoding': 'gzip',
+    'Host': 'www.sec.gov',
+}
+
+
+statements_dict = get_sec_file(param_dict, headers)
+print(statements_dict)
+
+if statements_dict:
+    with pd.ExcelWriter(ticker + '_' + file_type + '.xlsx') as writer:
+        for k, v in statements_dict.items():
+            filings_df = parse_sec_file(v)
+            filings_df.to_excel(writer, sheet_name=k)
